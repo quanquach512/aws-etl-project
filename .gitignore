@@ -1,0 +1,15 @@
+# Python
+__pycache__/
+*.pyc
+venv/
+
+# Data files
+data/
+*.csv
+*.json
+
+# AWS
+.aws/
+
+# Mac
+.DS_Store
