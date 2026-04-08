@@ -1,0 +1,41 @@
+import json
+import os
+from datetime import datetime
+
+import boto3
+from urllib.request import urlopen, Request
+
+s3 = boto3.client("s3")
+
+
+BUCKET_NAME = os.environ["BUCKET_NAME"]
+PREFIX = os.environ.get("PREFIX", "raw/products_api")
+
+def lambda_handler(event, context):
+    url = "https://dummyjson.com/products?limit=100"
+    req = Request(
+        url,
+        headers={
+            "User-Agent": "Mozilla/5.0",
+            "Accept": "application/json"
+        }
+    )
+    with urlopen(req, timeout=15) as response:
+        data = json.loads(response.read().decode("utf-8"))
+
+    products = data["products"]
+    
+    body = "\n".join(json.dumps(p) for p in products)
+    timestamp = datetime.utcnow().strftime("%Y-%m-%dT%H-%M-%S")
+
+    key = f"{PREFIX}/products_{timestamp}.json"
+    s3.put_object(
+        Bucket=BUCKET_NAME,
+        Key=key,
+        Body=body.encode("utf-8")
+    )
+
+    return {
+        "statusCode": 200,
+        "message": f"Saved {len(products)} products to {key}"
+    }
