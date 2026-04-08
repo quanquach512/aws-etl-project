@@ -12,7 +12,7 @@ The goal was simple: take data from multiple sources (CSV + API), process it in 
 - Uses AWS Glue to transform data into Parquet
 - Queries the data using Athena
 
-Basically: raw data → cleaned data → analytics
+Flow: CSV + API → S3 raw → Glue crawlers → Glue ETL → Parquet → Athena
 
 
 ## Tech stack
@@ -111,13 +111,19 @@ WHERE rnk <= 3;
 └── README.md
 ```
 
+## Infrastructure 
+
+![S3 Storage](images/AWS_S3.png)
+![AWS Glue Crawler](images/AWS_crawlers.png)
+![AWS ETL Jobs](images/AWS_jobs.png)
+
 ## Notes
 This project is not meant to be production-ready, but it covers the full flow of a data pipeline on AWS.
 
 If I had more time, I’d probably:
-	•	add incremental loading
-	•	schedule everything with EventBridge
-	•	add some data quality checks
+- add incremental loading
+- schedule everything with EventBridge
+- add some data quality checks
 
 
 ## Why I built this
